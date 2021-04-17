@@ -37,10 +37,9 @@ def all_logs():
     for x in Logs.query.all():
         for i in x.actions:
             logs.append([x.user, *i])
-            if limit and len(logs) >= limit:
-                return jsonify({"data": logs[:limit]})
-
-    return jsonify({"data": logs})
+    # sort by timestamp
+    logs.sort(key=lambda x: x[3], reverse=True)
+    return jsonify({"data": logs[:limit] if limit else logs})
 
 
 def get_previous_logs(user):
