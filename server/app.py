@@ -38,7 +38,7 @@ def all_logs():
         for i in x.actions:
             logs.append([x.user, *i])
     # sort by timestamp
-    logs.sort(key=lambda x: x[3], reverse=True)
+    logs.sort(key=lambda x: x[4], reverse=True)
     return jsonify({"data": logs[:limit] if limit else logs})
 
 
@@ -55,7 +55,7 @@ def get_previous_logs(user):
 def add_logs():
     if not is_authenticated():
         return "No."
-    # Array<[User, Question, Answer, isCorrect, Timestamp]>
+    # Array<[User, Question, Answer, Timestamp, isCorrect]>
     data = request.get_data(as_text=True)
     unparsed = filter(bool, data.splitlines())
     js = [json.loads(x) for x in unparsed]
