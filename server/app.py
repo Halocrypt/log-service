@@ -6,12 +6,11 @@ from set_env import setup_env
 
 setup_env()
 from server.app_init import app
-from server.constants import ACCESS_KEY
+from server.constants import ACCESS_KEY, IS_PROD
 from server.models import Logs, add_to_db, commit
 
 
 def is_authenticated():
-    return True
     return request.headers.get("x-access-key") == ACCESS_KEY
 
 
@@ -40,7 +39,7 @@ def all_logs():
             logs.extend(k)
             if limit and len(logs) >= limit:
                 return jsonify({"data": logs[:limit]})
-                
+
     return jsonify({"data": logs})
 
 
