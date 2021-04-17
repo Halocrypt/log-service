@@ -2,7 +2,7 @@ from flask import send_from_directory, request
 import json
 
 from flask.json import jsonify
-from server.set_env import setup_env
+from set_env import setup_env
 
 setup_env()
 from server.app_init import app
@@ -34,7 +34,7 @@ def all_logs():
     logs = []
     for x in Logs.query.all():
         logs.extend(x.actions)
-        if len(logs) >= limit:
+        if limit and len(logs) >= limit:
             return jsonify({"data": logs[:limit]})
     return jsonify({"data": logs})
 

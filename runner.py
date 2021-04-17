@@ -1,4 +1,4 @@
-from server.set_env import setup_env
+from set_env import setup_env
 
 setup_env()
 
