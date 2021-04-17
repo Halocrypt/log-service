@@ -11,6 +11,8 @@ from server.models import Logs, add_to_db, commit
 
 
 def is_authenticated():
+    # if not IS_PROD:
+    #     return True
     return request.headers.get("x-access-key") == ACCESS_KEY
 
 
@@ -33,10 +35,8 @@ def all_logs():
 
     logs = []
     for x in Logs.query.all():
-        k = []
         for i in x.actions:
-            k.append([x.user, *i])
-            logs.extend(k)
+            logs.append([x.user, *i])
             if limit and len(logs) >= limit:
                 return jsonify({"data": logs[:limit]})
 
