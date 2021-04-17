@@ -1,14 +1,10 @@
 from flask import Flask, request
+from server.constants import DATABASE_URL
 
-from floodgate import guard
-
-from server.constants import DATABASE_URL, FLASK_SECRET, IS_PROD
-
-from server.util import get_origin, json_response
 from server.models import db
 
 app = Flask(__name__)
-app.secret_key = FLASK_SECRET
+
 database_url: str = DATABASE_URL
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
@@ -17,38 +13,24 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 
-# not exactly as we have 4 workers running, it's basically a lottery if you hit the same worker thrice
-# gate = Gate(use_heroku_ip_resolver=IS_PROD, limit=1, min_requests=3)
-
-
-@app.before_request
-@guard(ban_time=5, ip_resolver="heroku" if IS_PROD else None, request_count=50, per=15)
-def gate_check():
-    pass
-
-
 @app.errorhandler(404)
 def catch_all(e):
-    return json_response({"error": "not found"})
+    return "not found"
 
 
 @app.errorhandler(405)
 def method_not_allowed(e):
-    return json_response({"error": "Method not allowed"})
-
-
-EXPOSE_HEADERS = ", ".join(("x-access-token", "x-refresh-token", "x-dynamic"))
+    return "Method not allowed"
 
 
 @app.after_request
 def cors(resp):
-    origin = get_origin(request)
-    resp.headers["access-control-allow-origin"] = origin
+
+    resp.headers["access-control-allow-origin"] = request.headers.get("origin") or "*"
     resp.headers["access-control-allow-headers"] = request.headers.get(
         "access-control-request-headers", "*"
     )
     resp.headers["access-control-allow-credentials"] = "true"
     resp.headers["x-dynamic"] = "true"
     resp.headers["access-control-max-age"] = "86400"
-    resp.headers["access-control-expose-headers"] = EXPOSE_HEADERS
     return resp
