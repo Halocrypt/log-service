@@ -29,7 +29,7 @@ def robots():
 def all_logs():
     if not is_authenticated():
         return "Hi, No."
-    limit = request.args.get("limit")
+    limit = int(request.args.get("limit", 0))
 
     logs = []
     for x in Logs.query.all():
