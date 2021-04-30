@@ -45,7 +45,9 @@ def all_logs():
 def get_previous_logs(user):
     l: Logs = Logs.query.filter_by(user=user).first()
     if l:
-        return l.actions
+        a = l.actions
+        l.actions = a
+        return a
     l = Logs(user)
     add_to_db(l)
     return l.actions
