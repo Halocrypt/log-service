@@ -1,5 +1,6 @@
 from os import environ as _environ
-
+from pathlib import Path
+from os import path
 from set_env import setup_env as _setup_env
 
 _setup_env()
@@ -14,5 +15,8 @@ if IS_PROD:
 
 DATABASE_URL = _environ["DATABASE_URL"].replace("postgres://", "postgresql://", 1)
 ACCESS_KEY = _environ["ACCESS_KEY"]
+OUT = str(Path(path.dirname(path.realpath(__file__)), "out.json").resolve())
 
 del _environ
+del Path
+del path

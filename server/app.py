@@ -1,12 +1,13 @@
 from flask import send_from_directory, request
 import json
+from flask.helpers import send_file
 
 from flask.json import jsonify
 from set_env import setup_env
 
 setup_env()
 from server.app_init import app
-from server.constants import ACCESS_KEY, IS_PROD
+from server.constants import ACCESS_KEY, OUT
 from server.models import Logs, add_to_db, commit
 
 
@@ -31,15 +32,7 @@ def robots():
 def all_logs():
     if not is_authenticated():
         return "Hi, No."
-    limit = int(request.args.get("limit", 0))
-
-    logs = []
-    for x in Logs.query.all():
-        for i in x.actions:
-            logs.append([x.user, *i])
-    # sort by timestamp
-    logs.sort(key=lambda x: x[4], reverse=True)
-    return jsonify({"data": logs[:limit] if limit else logs})
+    return send_file(OUT)
 
 
 def get_previous_logs(user):
